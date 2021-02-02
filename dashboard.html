@@ -73,15 +73,63 @@
                 </v-col>
             </v-row>
 
+                <v-col>
+                    <v-card class="mx-auto" tile flat>
+                        <v-list flat>
+                            <v-list-item>
+                                <v-icon>mdi-magnify</v-icon>
+                                <v-list-item-icon>
+                                    
+                                </v-list-item-icon>
+
+                                <v-list-item-content>
+                                    <v-list-item-title>
+                                        <v-text-field label="Search by Name"></v-text-field>
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-list>
+                    </v-card>
+                </v-col>
+            <v-row>
+                
+            </v-row>
             <v-row id="request viewer">
                 <v-col>
                     <v-card elevation="0">
                         <v-card-text>
                             <v-tabs v-model="tab">
-                                <v-tab v-for="item in items" :key="item">
-                                    {{ item }}
+                                <v-tab v-for="name in tabNames" :key="name">
+                                    {{ name }}
                                 </v-tab>
                             </v-tabs>
+
+                            <!-- items -->
+                            <v-tabs-items v-model="tab">
+                                <v-tab-item v-for="name in tabNames" :key="name">
+                                    <!-- this is the card that will hold all of the request glance info
+                                    this will be a separate component (most likely) -->
+                                    <v-card v-for="request in requests" :key="request.name" flat>
+                                        <v-card-text>
+                                            <v-row>
+                                                <v-col>
+                                                    {{ request.name }}
+                                                </v-col>
+                                                <v-col>
+                                                    {{ request.requestFor }}
+                                                </v-col>
+                                                <v-col>
+                                                    {{ request.type }}
+                                                </v-col>
+                                                <v-col>
+                                                    <!-- control status -->
+                                                    {{ request.status }}
+                                                </v-col>
+                                            </v-row>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-tab-item>
+                            </v-tab-items>
                         </v-card-text>
                     </v-card>
                 </v-col>
@@ -103,8 +151,42 @@
       data() {
           return {
               tab: null,
-              items: ["All Requests", "Pending Requests", "Accepted Requests"],
-              text: "Here is an example"
+              tabNames: ["All Requests", "Pending Requests", "Accepted Requests"],
+              text: "Here is an example",
+              requests: [
+              {
+                  name: "jonbaker190",
+                  text: "hello! I would love to get a portrait for my sister.",
+                  type: "portrait",
+                  requestFor: "personal",
+                  estimatedPricing: 65,
+                  status: "pending"
+              },
+              {
+                  name: "sir_aken",
+                  text: "hello! I would love to get a logo for my brand.",
+                  type: "logo",
+                  requestFor: "business",
+                  estimatedPricing: 190,
+                  status: "pending"
+              },
+              {
+                  name: "cuzcoNachues",
+                  text: "Hiya! I'm in the market for a nice book illustration for my upcoming children's book!",
+                  type: "book illustration",
+                  requestFor: "business",
+                  estimatedPricing: 400,
+                  status: "pending"
+              },
+              {
+                  name: "belgradeSofia",
+                  text: "Hey. Can u help me to write my script?",
+                  type: "unknown",
+                  requestFor: "personal",
+                  estimatedPricing: 100,
+                  status: "pending"
+              }
+              ],
           }
       }
     })
