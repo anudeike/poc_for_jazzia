@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+  <div id="app">
+    <v-app id="inpsire">
+
+        <!-- this should go in the navbar section
+        according to this codepen (ref: https://codepen.io/aQW5z9fe/pen/GRpQqpG?editors=1010) -->
+        <v-navigation-drawer permanent expand-on-hover>
+                                <v-list>
+                                    <!-- avatar -->
+                                  <v-list-item class="px-2">
+                                    <v-list-item-avatar>
+                                      <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
+                                    </v-list-item-avatar>
+                                  </v-list-item>
+                        
+                                  <v-list-item link>
+                                    <v-list-item-content>
+                                      <v-list-item-title class="title">
+                                        Lady Nefertiti
+                                      </v-list-item-title>
+                                      <v-list-item-subtitle>ladynefertitii@gmail.com</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                </v-list>
+                        
+                                <v-divider></v-divider>
+                        
+                                <v-list
+                                  nav
+                                  dense
+                                >
+                                  <v-list-item link>
+                                    <v-list-item-icon>
+                                      <v-icon>mdi-account-box</v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-title>Profile</v-list-item-title>
+                                  </v-list-item>
+            
+                                  <v-list-item link>
+                                    <v-list-item-icon>
+                                      <v-icon>mdi-api</v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-title>Service Info</v-list-item-title>
+                                  </v-list-item>
+            
+                                  <v-list-item link>
+                                    <v-list-item-icon>
+                                      <v-icon>mdi-chart-multiple</v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-title>Stats</v-list-item-title>
+                                  </v-list-item>
+            
+                                </v-list>
+                            </v-navigation-drawer>
+      <v-main>
+        <v-container fluid>
+
+            <v-row>
+                <v-col cols="2">
+                    <v-card elevation="0">
+                                <!-- left nav -->
+                            
+                    </v-card>
+                </v-col>
+
+                <v-col>
+                    <v-card>
+                        Hey
+                    </v-card>
+                </v-col>
+            </v-row>
+                
+            <!-- for organization
+            <div class="ma-12 pa-12">
+
+                
+                
+            </div> -->
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <!-- vue and vuetify -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+  <script>
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+    })
+  </script>
+</body>
+</html>
