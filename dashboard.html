@@ -12,7 +12,7 @@
 
         <!-- this should go in the navbar section
         according to this codepen (ref: https://codepen.io/aQW5z9fe/pen/GRpQqpG?editors=1010) -->
-        <v-navigation-drawer permanent expand-on-hover>
+        <v-navigation-drawer app permanent expand-on-hover>
                                 <v-list>
                                     <!-- avatar -->
                                   <v-list-item class="px-2">
@@ -62,28 +62,31 @@
                             </v-navigation-drawer>
       <v-main>
         <v-container fluid>
-
-            <v-row>
-                <v-col cols="2">
+            <!-- we might another navbar here -->
+            <v-row id="top-notification">
+                <v-col fluid>
                     <v-card elevation="0">
-                                <!-- left nav -->
-                            
-                    </v-card>
-                </v-col>
-
-                <v-col>
-                    <v-card>
-                        Hey
+                        <v-card-title>
+                            <span class="display-1">Dashboard</span>
+                        </v-card-title>
                     </v-card>
                 </v-col>
             </v-row>
-                
-            <!-- for organization
-            <div class="ma-12 pa-12">
 
+            <v-row id="request viewer">
+                <v-col>
+                    <v-card elevation="0">
+                        <v-card-text>
+                            <v-tabs v-model="tab">
+                                <v-tab v-for="item in items" :key="item">
+                                    {{ item }}
+                                </v-tab>
+                            </v-tabs>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
                 
-                
-            </div> -->
+            </v-row>
         </v-container>
       </v-main>
     </v-app>
@@ -97,6 +100,13 @@
     new Vue({
       el: '#app',
       vuetify: new Vuetify(),
+      data() {
+          return {
+              tab: null,
+              items: ["All Requests", "Pending Requests", "Accepted Requests"],
+              text: "Here is an example"
+          }
+      }
     })
   </script>
 </body>
