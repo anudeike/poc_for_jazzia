@@ -141,49 +141,6 @@
                 </v-col>
             </v-row>
 
-            <v-row id="request viewer">
-                <v-col>
-                    <v-card elevation="0">
-                        <v-card-text>
-                            <v-tabs v-model="tab">
-                                <!-- tabs names -->
-                                <v-tab v-for="name in tabNames" :key="name">
-                                    {{ name }}
-                                </v-tab>
-                            </v-tabs>
-
-                            <!-- items -->
-                            <v-tabs-items v-model="tab">
-                                <v-tab-item v-for="name in tabNames" :key="name">
-                                    <!-- this is the card that will hold all of the request glance info
-                                    this will be a separate component (most likely) -->
-                                    <v-card v-for="request in requests" :key="request.name" flat>
-                                        <v-card-text>
-                                            <v-row>
-                                                <v-col>
-                                                    <span class="headline">{{ request.name }}</span>
-                                                    
-                                                </v-col>
-                                                <v-col>
-                                                    {{ request.requestFor }}
-                                                </v-col>
-                                                <v-col>
-                                                    {{ request.type }}
-                                                </v-col>
-                                                <v-col>
-                                                    <!-- control status -->
-                                                    {{ request.status }}
-                                                </v-col>
-                                            </v-row>
-                                        </v-card-text>
-                                    </v-card>
-                                </v-tab-item>
-                            </v-tab-items>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-                
-            </v-row>
         </v-container>
       </v-main>
     </v-app>
@@ -214,40 +171,7 @@
                 access_token: "1161101984688218113-WWCybxdbtm6zk7FsKEw5PFIA9cYhC6",
                 access_token_secret: "fFlP1atWxvb6G5RDUW0GqlZ8WfSKBxeMPrLwmtNBf4q5H",
               },
-              requests: [
-              {
-                  name: "jonbaker190",
-                  text: "hello! I would love to get a portrait for my sister.",
-                  type: "portrait",
-                  requestFor: "personal",
-                  estimatedPricing: 65,
-                  status: "pending"
-              },
-              {
-                  name: "sir_aken",
-                  text: "hello! I would love to get a logo for my brand.",
-                  type: "logo",
-                  requestFor: "business",
-                  estimatedPricing: 190,
-                  status: "accepted"
-              },
-              {
-                  name: "cuzcoNachues",
-                  text: "Hiya! I'm in the market for a nice book illustration for my upcoming children's book!",
-                  type: "book illustration",
-                  requestFor: "business",
-                  estimatedPricing: 400,
-                  status: "pending"
-              },
-              {
-                  name: "belgradeSofia",
-                  text: "Hey. Can u help me to write my script?",
-                  type: "unknown",
-                  requestFor: "personal",
-                  estimatedPricing: 100,
-                  status: "pending"
-              }
-              ],
+              requests: [],
           }
       },
       methods: {
@@ -272,7 +196,7 @@
 
               const url = "https://api.twitter.com/1.1/direct_messages/events/new.json"
 
-              const parameters = {
+              var parameters = {
                   oauth_consumer_key: this.oAuthObject.consumer_key,
                   oauth_token: this.oAuthObject.access_token,
                   oauth_signature_method: "HMAC-SHA1",
@@ -281,18 +205,73 @@
                   oauth_version:"1.0"
               }
 
-              var signature_base = `POST&${encodeURIComponent(url)}&${encodeURIComponent("oauth_consumer_key=" + this.oAuthObject.consumer_key)}${encodeURIComponent("&oauth_nonce=" + oauth_nonce)}${encodeURIComponent("&oauth_signature_method=" + "HMAC-SHA1")}${encodeURIComponent("&oauth_timestamp=" + oauth_timestamp)}${encodeURIComponent("&oauth_token=" + this.oAuthObject.access_token)}${encodeURIComponent("&oauth_version="+"1.0")}`;
+              const parameters2 = {
+                  status: "Hello Ladies + Gentlemen, a signed OAuth request!",
+                  include_entities: "true",
+                  oauth_consumer_key: "xvz1evFS4wEEPTGEFPHBog",
+                  oauth_token: "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb",
+                  oauth_signature_method: "HMAC-SHA1",
+                  oauth_timestamp: "1318622958",
+                  oauth_nonce: "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg",
+                  oauth_version:"1.0"
+              }
 
-              var secret = this.oAuthObject.consumer_secret + "&" +this.oAuthObject.access_token_secret
-              var signature = CryptoJS.HmacSHA1(signature_base, secret);
+              // percent encoding goes first
+              
+              let ordered = {};
+              Object.keys(parameters2).sort().forEach(function(key) {
+                ordered[key] = parameters2[key];
+              });
 
-              console.log(signature)
+              console.log(ordered);
+
+              // this is the correct encoding, only done for the status variable since it is the content attached 
+              ordered['status'] = encodeURIComponent(ordered['status']).replace(/[!'()*]/g,function(c){
+                  return('%'+c.charCodeAt(0).toString(16).toUpperCase());
+              });
+
+              let encodedParameters = '';
+
+              for (k in ordered) {
+                const encodedValue = ordered[k];
+                const encodedKey = k;
+                encodedParameters += `${encodedKey}=${encodedValue}&`
+              }
+
+            //   let encodedParameters = '';
+
+            //   for (k in ordered) {
+            //     const encodedValue = escape(ordered[k]);
+            //     const encodedKey = encodeURIComponent(k);
+
+            //     if(encodedParameters === ''){
+            //         encodedParameters +=     encodeURIComponent(`${encodedKey}=${encodedValue}`)
+            //     }
+            //     else{
+            //         encodedParameters += encodeURIComponent(`&${encodedKey}=${encodedValue}`);
+            //     }
+            //   }
+
+            // should be alright up till here
+            var parameter_string = encodedParameters.substring(0, encodedParameters.length-1)
+            console.log(parameter_string);
+
+            // creating the signature base string
+
+            
+
+              //var signature_base = `POST&${encodeURIComponent(url)}&${encodeURIComponent("oauth_consumer_key=" + this.oAuthObject.consumer_key)}${encodeURIComponent("&oauth_nonce=" + oauth_nonce)}${encodeURIComponent("&oauth_signature_method=" + "HMAC-SHA1")}${encodeURIComponent("&oauth_timestamp=" + oauth_timestamp)}${encodeURIComponent("&oauth_token=" + this.oAuthObject.access_token)}${encodeURIComponent("&oauth_version="+"1.0")}`;
+
+            //   var secret = this.oAuthObject.consumer_secret + "&" +this.oAuthObject.access_token_secret
+            //   var signature = CryptoJS.HmacSHA1(signature_base, secret);
+
+            //   console.log(signature)
               // this string works
               // OAuth oauth_consumer_key="${this.oAuthObject.consumer_key}",oauth_token="${this.oAuthObject.access_token}",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1614894648",oauth_nonce="RxOJ8BQxXKM",oauth_version="1.0",oauth_signature="F2nctK%2FTsTsxd8sfnfetr31yTXA%3D"
-              var authHeaders = {
-                  'Authorization': `OAuth oauth_consumer_key="${this.oAuthObject.consumer_key}",oauth_token="${this.oAuthObject.access_token}",oauth_signature_method="HMAC-SHA1",oauth_timestamp=${oauth_timestamp},oauth_nonce=${oauth_nonce},oauth_version="1.0",oauth_signature=${CryptoJS.enc.Base64.stringify(signature)}`,
-                  //'content-type': 'application/json'
-              }
+            //   var authHeaders = {
+            //       'Authorization': `OAuth oauth_consumer_key="${this.oAuthObject.consumer_key}",oauth_token="${this.oAuthObject.access_token}",oauth_signature_method="HMAC-SHA1",oauth_timestamp=${oauth_timestamp},oauth_nonce=${oauth_nonce},oauth_version="1.0",oauth_signature=${CryptoJS.enc.Base64.stringify(signature)}`,
+            //       //'content-type': 'application/json'
+            //   }
 
 
               var requestInfo = {
@@ -312,12 +291,12 @@
                   }
 
               }
-              // it works!
-              axios.post(requestInfo.url, requestInfo.body, {headers: authHeaders}).then((resp) => {
-                  console.log(resp)
-              }).catch(e => {
-                  console.log(`There was an error: ${e}`)
-              })
+            //   // it works!
+            //   axios.post(requestInfo.url, requestInfo.body, {headers: authHeaders}).then((resp) => {
+            //       console.log(resp)
+            //   }).catch(e => {
+            //       console.log(`There was an error: ${e}`)
+            //   })
           }
       }
     })
