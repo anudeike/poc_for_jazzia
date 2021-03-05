@@ -277,8 +277,14 @@
             var e_consumer_secret = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"
             var e_token_secret = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
 
-            var secret = this.percentEncode(e_consumer_secret) + "&" + this.percentEncode(e_token_secret)
-            var signature = CryptoJS.HmacSHA1(signature_base, secret);
+            // cool this works!
+            var signing_key = this.percentEncode(e_consumer_secret) + "&" + this.percentEncode(e_token_secret)
+            console.log(signing_key);
+
+            // get the key from the algorithim
+
+            var signature = CryptoJS.HmacSHA1(signature_base_string, signing_key);
+            console.log(CryptoJS.enc.Base64.stringify(signature)) // THIS WORKS!
 
             //   console.log(signature)
               // this string works
