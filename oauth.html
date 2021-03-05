@@ -175,6 +175,13 @@
           }
       },
       methods: {
+          percentEncode: function(inStr){
+              var res = encodeURIComponent(inStr).replace(/[!'()*]/g,function(c){
+                  return('%'+c.charCodeAt(0).toString(16).toUpperCase());
+              });
+
+              return res
+          },
           onSendDM: function () {
               // set the headers
 
@@ -194,7 +201,8 @@
               var oauth_nonce = uuid.v1().toString();
               oauth_nonce = oauth_nonce.split('-').join('');
 
-              const url = "https://api.twitter.com/1.1/direct_messages/events/new.json"
+              var url = "https://api.twitter.com/1.1/direct_messages/events/new.json"
+              var url2 = "https://api.twitter.com/1.1/statuses/update.json"
 
               var parameters = {
                   oauth_consumer_key: this.oAuthObject.consumer_key,
@@ -226,9 +234,7 @@
               console.log(ordered);
 
               // this is the correct encoding, only done for the status variable since it is the content attached 
-              ordered['status'] = encodeURIComponent(ordered['status']).replace(/[!'()*]/g,function(c){
-                  return('%'+c.charCodeAt(0).toString(16).toUpperCase());
-              });
+              ordered['status'] = this.percentEncode(ordered['status'])
 
               let encodedParameters = '';
 
@@ -257,13 +263,22 @@
             console.log(parameter_string);
 
             // creating the signature base string
+            var method = "POST"
+            var signature_base_string = method
+            signature_base_string += '&'
+            signature_base_string += this.percentEncode(url2);
 
-            
+            signature_base_string += '&'
+            signature_base_string += this.percentEncode(parameter_string);
 
-              //var signature_base = `POST&${encodeURIComponent(url)}&${encodeURIComponent("oauth_consumer_key=" + this.oAuthObject.consumer_key)}${encodeURIComponent("&oauth_nonce=" + oauth_nonce)}${encodeURIComponent("&oauth_signature_method=" + "HMAC-SHA1")}${encodeURIComponent("&oauth_timestamp=" + oauth_timestamp)}${encodeURIComponent("&oauth_token=" + this.oAuthObject.access_token)}${encodeURIComponent("&oauth_version="+"1.0")}`;
+            console.log(signature_base_string)
 
-            //   var secret = this.oAuthObject.consumer_secret + "&" +this.oAuthObject.access_token_secret
-            //   var signature = CryptoJS.HmacSHA1(signature_base, secret);
+            // these are just for testing purp
+            var e_consumer_secret = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"
+            var e_token_secret = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
+
+            var secret = this.percentEncode(e_consumer_secret) + "&" + this.percentEncode(e_token_secret)
+            var signature = CryptoJS.HmacSHA1(signature_base, secret);
 
             //   console.log(signature)
               // this string works
