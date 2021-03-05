@@ -152,6 +152,7 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js" integrity="sha512-UNM1njAgOFUa74Z0bADwAq8gbTcqZC8Ej4xPSzpnh0l6KMevwvkBvbldF9uR++qKeJ+MOZHRjV1HZjoRvjDfNQ==" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/oauth-1.0a@2.2.6/oauth-1.0a.min.js"></script>
+  <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A==" crossorigin="anonymous"></script>
 
 
@@ -197,9 +198,10 @@
               */
 
               // Collecting the necessary parameters
-              const oauth_timestamp = Math.floor(Date.now() / 1000);
-              var oauth_nonce = uuid.v1().toString();
-              oauth_nonce = oauth_nonce.split('-').join('');
+              const oauth_timestamp = "1614920711" //Math.floor(Date.now() / 1000);
+              console.log(oauth_timestamp)
+              var oauth_nonce = "Lkl0V2FPcGu" //uuid.v1().toString();
+              //oauth_nonce = oauth_nonce.split('-').join('');
 
               var url = "https://api.twitter.com/1.1/direct_messages/events/new.json"
               var url2 = "https://api.twitter.com/1.1/statuses/update.json"
@@ -225,16 +227,32 @@
               }
 
               // percent encoding goes first
+              var jsonbody = {
+                      "event": {
+                          "type": "message_create",
+                          "message_create": {
+                              "target": {
+                                  "recipient_id": "1329098120781844481"
+                              },
+                              "message_data": {
+                                  "text": "Hello From Client!"
+                              }
+                          }
+                      }
+                  }
               
+              var jsonbody = JSON.stringify(jsonbody);
+              //parameters["body"] = jsonbody
+
               let ordered = {};
-              Object.keys(parameters2).sort().forEach(function(key) {
-                ordered[key] = parameters2[key];
+              Object.keys(parameters).sort().forEach(function(key) {
+                ordered[key] = parameters[key];
               });
 
               console.log(ordered);
 
               // this is the correct encoding, only done for the status variable since it is the content attached 
-              ordered['status'] = this.percentEncode(ordered['status'])
+             // ordered['body'] = this.percentEncode(ordered['body'])
 
               let encodedParameters = '';
 
@@ -266,7 +284,7 @@
             var method = "POST"
             var signature_base_string = method
             signature_base_string += '&'
-            signature_base_string += this.percentEncode(url2);
+            signature_base_string += this.percentEncode(url);
 
             signature_base_string += '&'
             signature_base_string += this.percentEncode(parameter_string);
@@ -274,8 +292,8 @@
             console.log(signature_base_string)
 
             // these are just for testing purp
-            var e_consumer_secret = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"
-            var e_token_secret = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
+            var e_consumer_secret = this.oAuthObject.consumer_secret;
+            var e_token_secret = this.oAuthObject.access_token_secret;
 
             // cool this works!
             var signing_key = this.percentEncode(e_consumer_secret) + "&" + this.percentEncode(e_token_secret)
@@ -285,15 +303,18 @@
 
             var signature = CryptoJS.HmacSHA1(signature_base_string, signing_key);
             console.log(CryptoJS.enc.Base64.stringify(signature)) // THIS WORKS!
+            signature = CryptoJS.enc.Base64.stringify(signature)
+            signature = signature.substring(0, signature.length - 1) + '%3D'
 
             //   console.log(signature)
               // this string works
               // OAuth oauth_consumer_key="${this.oAuthObject.consumer_key}",oauth_token="${this.oAuthObject.access_token}",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1614894648",oauth_nonce="RxOJ8BQxXKM",oauth_version="1.0",oauth_signature="F2nctK%2FTsTsxd8sfnfetr31yTXA%3D"
-            //   var authHeaders = {
-            //       'Authorization': `OAuth oauth_consumer_key="${this.oAuthObject.consumer_key}",oauth_token="${this.oAuthObject.access_token}",oauth_signature_method="HMAC-SHA1",oauth_timestamp=${oauth_timestamp},oauth_nonce=${oauth_nonce},oauth_version="1.0",oauth_signature=${CryptoJS.enc.Base64.stringify(signature)}`,
-            //       //'content-type': 'application/json'
-            //   }
+              var authHeaders = {
+                  'Authorization': `OAuth oauth_consumer_key="${this.oAuthObject.consumer_key}",oauth_token="${this.oAuthObject.access_token}",oauth_signature_method="HMAC-SHA1",oauth_timestamp=${oauth_timestamp},oauth_nonce=${oauth_nonce},oauth_version="1.0",oauth_signature="${signature}"`,
+                  //'content-type': 'application/json'
+              }
 
+              console.log(authHeaders.Authorization)
 
               var requestInfo = {
                   url: "https://secure-mountain-59250.herokuapp.com/https://api.twitter.com/1.1/direct_messages/events/new.json",
@@ -305,19 +326,18 @@
                                   "recipient_id": "1329098120781844481"
                               },
                               "message_data": {
-                                  "text": "Hello From Client!"
+                                  "text": "Hello From Client! But not the best."
                               }
                           }
                       }
                   }
 
               }
-            //   // it works!
-            //   axios.post(requestInfo.url, requestInfo.body, {headers: authHeaders}).then((resp) => {
-            //       console.log(resp)
-            //   }).catch(e => {
-            //       console.log(`There was an error: ${e}`)
-            //   })
+              axios.post(requestInfo.url, requestInfo.body, {headers: authHeaders}).then((resp) => {
+                  console.log(resp)
+              }).catch(e => {
+                  console.log(`There was an error: ${e}`)
+              })
           }
       }
     })
